@@ -6,8 +6,8 @@ node_modules/
 .env.local
 .env.*.local
 
-# Uploads directory (user-generated content)
-uploads/
+# Uploads directory (tracked for deployment)
+# uploads/
 
 # Logs
 logs/
