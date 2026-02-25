@@ -6,11 +6,12 @@ const nodemailer = require('nodemailer');
 // @access  Private
 exports.getContacts = async (req, res) => {
   try {
-    const { read, replied } = req.query;
+    const { read, replied, sourcePage } = req.query;
     let query = {};
 
     if (read !== undefined) query.read = read === 'true';
     if (replied !== undefined) query.replied = replied === 'true';
+    if (sourcePage) query.sourcePage = sourcePage;
 
     const contacts = await Contact.find(query).sort({ createdAt: -1 });
     res.status(200).json({

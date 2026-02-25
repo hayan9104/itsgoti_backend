@@ -28,6 +28,11 @@ const contactSchema = new mongoose.Schema(
     source: {
       type: String,
     },
+    sourcePage: {
+      type: String,
+      enum: ['Contact Page', 'Landing Page', 'Landing Page 2'],
+      default: 'Contact Page',
+    },
     message: {
       type: String,
       required: [true, 'Please add your message'],
