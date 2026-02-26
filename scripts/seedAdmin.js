@@ -6,12 +6,19 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const User = require('../models/User');
 
-// Default credentials
+// Default credentials - Add your new users here
 const USERS = [
   {
     name: 'Admin',
     email: 'admin@itsgoti.in',
     password: 'Admin@123',
+    role: 'admin',
+  },
+  // Add new user below:
+  {
+    name: 'New Admin',
+    email: 'newadmin@example.com',
+    password: 'NewAdmin@123',
     role: 'admin',
   },
 ];

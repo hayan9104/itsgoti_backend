@@ -2,10 +2,10 @@ const User = require('../models/User');
 
 // @desc    Register user
 // @route   POST /api/auth/register
-// @access  Public
+// @access  Public (but role=admin requires authentication)
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -16,14 +16,18 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create user
+    // Create user with role (default to 'user' if not specified)
     const user = await User.create({
       name,
       email,
       password,
+      role: role || 'admin', // Default to admin for this admin panel
     });
 
-    sendTokenResponse(user, 201, res);
+    res.status(201).json({
+      success: true,
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -101,6 +105,46 @@ exports.logout = async (req, res) => {
     data: {},
     message: 'Logged out successfully',
   });
+};
+
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+// @access  Private
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate inputs
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide current password and new password',
+      });
+    }
+
+    // Get user with password
+    const user = await User.findById(req.user.id).select('+password');
+
+    // Check current password
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect',
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 // Helper function to get token from model, create cookie and send response
