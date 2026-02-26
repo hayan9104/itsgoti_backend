@@ -29,6 +29,11 @@ const pageSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    redirectTo: {
+      type: String,
+      default: null,
+      // When a page is hidden, redirect users to this page instead
+    },
   },
   {
     timestamps: true,
