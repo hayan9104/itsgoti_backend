@@ -4,12 +4,11 @@ const contactSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Please add your name'],
       trim: true,
+      default: '',
     },
     email: {
       type: String,
-      required: [true, 'Please add your email'],
       match: [
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         'Please add a valid email',
@@ -21,6 +20,12 @@ const contactSchema = new mongoose.Schema(
     company: {
       type: String,
     },
+    companyName: {
+      type: String,
+    },
+    service: {
+      type: String,
+    },
     subject: {
       type: String,
       default: 'Contact Form Inquiry',
@@ -30,12 +35,12 @@ const contactSchema = new mongoose.Schema(
     },
     sourcePage: {
       type: String,
-      enum: ['Contact Page', 'Landing Page', 'Landing Page 2'],
+      enum: ['Contact Page', 'Landing Page', 'Landing Page 2', 'Landing Page 3'],
       default: 'Contact Page',
     },
     message: {
       type: String,
-      required: [true, 'Please add your message'],
+      default: '',
     },
     read: {
       type: Boolean,
