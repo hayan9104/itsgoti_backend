@@ -168,7 +168,16 @@ exports.duplicateTheme = async (req, res) => {
       });
     }
 
-    const newName = req.body.name || `Copy of ${sourceTheme.name}`;
+    // Generate unique name: "Copy of X", "Copy of X (2)", "Copy of X (3)", etc.
+    let baseName = req.body.name || `Copy of ${sourceTheme.name}`;
+    let newName = baseName;
+    let counter = 1;
+
+    // Check if name already exists and find a unique one
+    while (await Theme.findOne({ name: newName })) {
+      counter++;
+      newName = `${baseName} (${counter})`;
+    }
 
     const newTheme = await Theme.create({
       name: newName,
@@ -232,6 +241,21 @@ exports.publishTheme = async (req, res) => {
 exports.updateTheme = async (req, res) => {
   try {
     const { name, customCSS, config, thumbnail, themeCode } = req.body;
+
+    // Check for duplicate name if name is being updated
+    if (name !== undefined) {
+      const existingTheme = await Theme.findOne({
+        name: name,
+        _id: { $ne: req.params.id } // Exclude current theme
+      });
+      if (existingTheme) {
+        return res.status(400).json({
+          success: false,
+          message: 'A theme with this name already exists',
+        });
+      }
+    }
+
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (customCSS !== undefined) updateData.customCSS = customCSS;
